@@ -1,65 +1,173 @@
-import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+import { estimateReadingMinutes, listArticles } from "@/lib/news/store";
+
+const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+const compactDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+});
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const articles = await listArticles({ limit: 20 });
+
+  const featured = articles[0];
+  const spotlight = articles.slice(1, 4);
+  const feed = articles.slice(4, 16);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="news-cosmos min-h-screen text-[var(--text-primary)]">
+      <div className="mx-auto max-w-7xl px-5 pb-16 pt-8 sm:px-8 lg:px-12">
+        <header className="fade-up mb-14 flex items-center justify-between rounded-full border border-[var(--surface-border)] bg-[var(--surface)]/70 px-4 py-3 backdrop-blur-xl sm:px-6">
+          <Link href="/" className="flex items-center gap-3">
+            <span className="orb-pulse relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)]">
+              <span className="absolute h-5 w-5 rounded-full bg-[var(--accent-soft)]" />
+            </span>
+            <span className="text-base font-semibold tracking-wide text-[var(--text-primary)]">MOLT NEWS</span>
+          </Link>
+
+          <p className="hidden text-sm text-[var(--text-muted)] md:block">
+            Automated by OpenClaw. Publishing live updates each hour.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        </header>
+
+        <main className="space-y-12">
+          <section className="fade-up mx-auto max-w-4xl text-center" style={{ animationDelay: "120ms" }}>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">Autonomous Newsroom</p>
+            <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
+              OpenClaw-Powered
+              <br />
+              Global News Platform
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-muted)]">
+              Breaking updates are researched by your OpenClaw agent, normalized into editorial format, and
+              published directly to this feed.
+            </p>
+
+            {featured ? (
+              <Link
+                href={`/news/${featured.slug}`}
+                className="mt-8 inline-flex items-center gap-3 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[11px] uppercase tracking-[0.17em] text-white">
+                  New
+                </span>
+                {featured.title}
+              </Link>
+            ) : null}
+          </section>
+
+          {featured ? (
+            <section className="fade-up" style={{ animationDelay: "220ms" }}>
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <h2 className="font-display text-3xl text-[var(--text-primary)] sm:text-4xl">Top Story</h2>
+                <p className="text-sm text-[var(--text-muted)]">{fullDateFormatter.format(new Date(featured.publishedAt))}</p>
+              </div>
+
+              <article className="glass-card overflow-hidden rounded-3xl border border-[var(--surface-border)] p-6 sm:p-8">
+                <div className="mb-5 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                  <span className="rounded-full border border-[var(--surface-border)] px-3 py-1 text-[var(--accent)]">{featured.category}</span>
+                  <span>{featured.sourceName}</span>
+                  <span>{estimateReadingMinutes(featured.content)} min read</span>
+                </div>
+
+                <h3 className="font-display text-3xl leading-tight text-[var(--text-primary)] sm:text-4xl">
+                  <Link href={`/news/${featured.slug}`} className="transition hover:text-[var(--accent)]">
+                    {featured.title}
+                  </Link>
+                </h3>
+
+                <p className="mt-4 max-w-3xl text-base leading-relaxed text-[var(--text-muted)]">{featured.summary}</p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <Link
+                    href={`/news/${featured.slug}`}
+                    className="rounded-full bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)]"
+                  >
+                    Read Article
+                  </Link>
+                  {featured.sourceUrl ? (
+                    <a
+                      href={featured.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-[var(--surface-border)] px-5 py-2.5 text-sm font-semibold text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    >
+                      Source
+                    </a>
+                  ) : null}
+                </div>
+              </article>
+            </section>
+          ) : null}
+
+          {spotlight.length > 0 ? (
+            <section className="fade-up" style={{ animationDelay: "320ms" }}>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-display text-2xl text-[var(--text-primary)] sm:text-3xl">Spotlight</h2>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                {spotlight.map((article) => (
+                  <article key={article.id} className="glass-card rounded-2xl border border-[var(--surface-border)] p-5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      {article.category} · {compactDateFormatter.format(new Date(article.publishedAt))}
+                    </p>
+                    <h3 className="mt-3 font-display text-2xl leading-tight text-[var(--text-primary)]">
+                      <Link href={`/news/${article.slug}`} className="transition hover:text-[var(--accent)]">
+                        {article.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">{article.summary}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="fade-up" style={{ animationDelay: "420ms" }}>
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="font-display text-2xl text-[var(--text-primary)] sm:text-3xl">Latest Feed</h2>
+              <span className="text-sm text-[var(--text-muted)]">{articles.length} published stories</span>
+            </div>
+
+            {feed.length > 0 ? (
+              <div className="space-y-3">
+                {feed.map((article) => (
+                  <article
+                    key={article.id}
+                    className="glass-card flex flex-col gap-4 rounded-2xl border border-[var(--surface-border)] p-5 md:flex-row md:items-center md:justify-between"
+                  >
+                    <div className="max-w-3xl">
+                      <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                        {article.category} · {article.sourceName} · {estimateReadingMinutes(article.content)} min read
+                      </p>
+                      <h3 className="mt-2 font-display text-2xl leading-tight text-[var(--text-primary)]">
+                        <Link href={`/news/${article.slug}`} className="transition hover:text-[var(--accent)]">
+                          {article.title}
+                        </Link>
+                      </h3>
+                      <p className="mt-2 text-sm text-[var(--text-muted)]">{article.summary}</p>
+                    </div>
+                    <div className="text-sm text-[var(--text-muted)]">{fullDateFormatter.format(new Date(article.publishedAt))}</div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="glass-card rounded-2xl border border-[var(--surface-border)] p-8 text-center text-[var(--text-muted)]">
+                Waiting for your OpenClaw webhook to publish the first article.
+              </div>
+            )}
+          </section>
+        </main>
+      </div>
     </div>
   );
 }

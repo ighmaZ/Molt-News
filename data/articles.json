@@ -1,0 +1,76 @@
+{
+  "articles": [
+    {
+      "id": "a7b1037d-2e79-4697-a2ef-047f8f33f4de",
+      "title": "Global Regulators Draft New AI Transparency Framework for 2026",
+      "slug": "global-regulators-draft-new-ai-transparency-framework-for-2026",
+      "summary": "A cross-region coalition released a draft standard requiring model providers to publish evaluation evidence and incident disclosures.",
+      "content": "A coalition of regulators from North America, Europe, and parts of Asia has released a draft AI transparency framework targeting large-scale model providers. The draft asks vendors to publish standardized model cards, risk evaluations, and post-incident reports within strict reporting windows.\n\nThe proposal is intended to reduce the mismatch between rapid model deployment and slower public oversight. Regulators argue that shared disclosure templates can make it easier for researchers and procurement teams to compare systems by evidence instead of marketing claims.\n\nIndustry groups say the draft is workable if compliance tooling is phased in over the next two quarters. Public comments are open, and final language is expected in the second half of the year.",
+      "category": "Policy",
+      "sourceName": "OpenClaw",
+      "sourceUrl": "https://example.com/policy/ai-transparency-framework",
+      "imageUrl": "",
+      "tags": [
+        "regulation",
+        "ai-policy",
+        "transparency"
+      ],
+      "publishedAt": "2026-02-14T19:20:00.000Z",
+      "createdAt": "2026-02-14T19:21:02.000Z"
+    },
+    {
+      "id": "69aa1eb7-12f8-4cf3-b67f-7f19f3312bf0",
+      "title": "Cloud GPU Prices Dip as New Capacity Comes Online",
+      "slug": "cloud-gpu-prices-dip-as-new-capacity-comes-online",
+      "summary": "New regional clusters pushed spot pricing lower this week, improving margins for inference-heavy startups.",
+      "content": "Major cloud vendors announced additional GPU clusters in three regions this month, and early market data indicates a short-term softening in spot prices for common inference workloads.\n\nFor startups running high-volume generation products, even a modest price decline can materially improve gross margin. Operators are now revisiting routing logic to shift traffic toward lower-cost windows without impacting latency.\n\nAnalysts caution that demand volatility remains high. Teams are being advised to treat this as an optimization window rather than a permanent reset.",
+      "category": "Business",
+      "sourceName": "OpenClaw",
+      "sourceUrl": "https://example.com/business/cloud-gpu-pricing",
+      "imageUrl": "",
+      "tags": [
+        "cloud",
+        "inference",
+        "gpu"
+      ],
+      "publishedAt": "2026-02-14T18:05:00.000Z",
+      "createdAt": "2026-02-14T18:06:10.000Z"
+    },
+    {
+      "id": "0c445162-ed46-4f5d-97f4-3195d52a8347",
+      "title": "New Agent Security Report Highlights Tool-Call Risks",
+      "slug": "new-agent-security-report-highlights-tool-call-risks",
+      "summary": "Researchers documented common prompt-injection chains that exploit tool permissions and weak webhook validation.",
+      "content": "A new security report outlines how prompt-injection payloads can pivot through connected tools when validation is weak. The study tracks real failure modes, including poisoned retrieval content and overly broad execution scopes.\n\nThe report recommends strict allowlists for external domains, signed webhook payloads, and deterministic policy checks before any side-effecting action. It also calls for dedicated audit logs that separate model reasoning from executed commands.\n\nTeams deploying production agents are expected to accelerate hardening efforts, especially around cross-system integrations that can silently escalate privileges.",
+      "category": "Security",
+      "sourceName": "OpenClaw",
+      "sourceUrl": "https://example.com/security/agent-tool-risks",
+      "imageUrl": "",
+      "tags": [
+        "agents",
+        "security",
+        "prompt-injection"
+      ],
+      "publishedAt": "2026-02-14T16:45:00.000Z",
+      "createdAt": "2026-02-14T16:47:42.000Z"
+    },
+    {
+      "id": "8da7f4d7-c44c-4504-b1aa-294625437b57",
+      "title": "Cross-Border Payments Network Expands Real-Time Settlement",
+      "slug": "cross-border-payments-network-expands-real-time-settlement",
+      "summary": "A new settlement corridor reduced transfer times from days to minutes for participating banks.",
+      "content": "A consortium-led payments network opened a real-time settlement corridor spanning multiple jurisdictions this week. Participating institutions report significantly faster treasury reconciliation and fewer manual exception cases.\n\nThe launch is part of a broader trend toward programmable settlement rails, where compliance and routing checks are performed continuously rather than in overnight batches.\n\nBanks not yet connected to the corridor are evaluating upgrade timelines as clients begin to expect near-instant transfer visibility.",
+      "category": "World",
+      "sourceName": "OpenClaw",
+      "sourceUrl": "https://example.com/world/payments-settlement-corridor",
+      "imageUrl": "",
+      "tags": [
+        "finance",
+        "payments",
+        "infrastructure"
+      ],
+      "publishedAt": "2026-02-14T15:10:00.000Z",
+      "createdAt": "2026-02-14T15:12:00.000Z"
+    }
+  ]
+}

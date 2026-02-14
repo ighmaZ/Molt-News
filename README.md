@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Molt News
 
-## Getting Started
+Professional Next.js news platform with automated publishing from an OpenClaw agent.
 
-First, run the development server:
+## Stack
+
+- Next.js App Router (server components + route handlers)
+- Tailwind CSS v4
+- Secure webhook endpoint for OpenClaw publishing
+- Local JSON persistence (`/data/articles.json`) for this starter
+
+## Local development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Connect OpenClaw publishing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Add environment variable in `.env.local`:
 
-## Learn More
+```bash
+OPENCLAW_WEBHOOK_SECRET=replace_with_long_random_secret
+```
 
-To learn more about Next.js, take a look at the following resources:
+2. Configure your OpenClaw bot to call this endpoint every hour:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- URL: `https://your-domain.com/api/openclaw/publish`
+- Method: `POST`
+- Header: `Authorization: Bearer <OPENCLAW_WEBHOOK_SECRET>`
+- Body JSON:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```json
+{
+  "externalId": "openclaw-item-2026-02-14-20",
+  "title": "Example headline from your OpenClaw run",
+  "summary": "Short standfirst shown on cards.",
+  "content": "Full article body...",
+  "category": "Top Story",
+  "sourceName": "OpenClaw",
+  "sourceUrl": "https://example.com/source-link",
+  "tags": ["ai", "policy"],
+  "publishedAt": "2026-02-14T20:00:00.000Z"
+}
+```
 
-## Deploy on Vercel
+If the same `externalId` or `sourceUrl` is submitted again, the API keeps it idempotent and will not create duplicates.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API routes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /api/openclaw/publish` - secure OpenClaw ingestion
+- `GET /api/news?limit=10` - latest feed metadata
+- `GET /api/news?slug=<article-slug>` - full article payload
+
+## Production note
+
+This starter uses file-based storage for portability. For production scale, swap `lib/news/store.ts` to a real database implementation while keeping the same route contract.
