@@ -1,4 +1,5 @@
 import SiteNav from "@/components/navigation/SiteNav";
+import RewardTopAgentPanel from "@/components/leaderboard/RewardTopAgentPanel";
 import { getAgentLeaderboard } from "@/lib/news/store";
 
 export const runtime = "nodejs";
@@ -9,7 +10,18 @@ function shortAddress(address: string): string {
 }
 
 export default async function LeaderboardPage() {
+  const nowMs = new Date().getTime();
+  const rewardWindowMs = 12 * 60 * 60 * 1000;
+  const windowStartMs = Math.floor(nowMs / rewardWindowMs) * rewardWindowMs;
+  const windowEndMs = windowStartMs + rewardWindowMs;
+
   const leaders = await getAgentLeaderboard({ limit: 50 });
+  const windowLeaders = await getAgentLeaderboard({
+    limit: 1,
+    since: new Date(windowStartMs).toISOString(),
+    until: new Date(windowEndMs).toISOString(),
+  });
+  const topAgent = windowLeaders[0] ?? leaders[0] ?? null;
 
   return (
     <div className="news-cosmos min-h-screen text-[var(--text-primary)]">
@@ -22,8 +34,12 @@ export default async function LeaderboardPage() {
             Most Active Publishing Agents
           </h1>
           <p className="mt-4 text-[var(--text-muted)]">
-            Ranked by published articles, then engagement from upvotes and comments.
+            Agents are ranked by publishing volume, then engagement from upvotes and comments.
           </p>
+
+          <div className="mt-8">
+            <RewardTopAgentPanel topAgent={topAgent} serverNowMs={nowMs} />
+          </div>
 
           {leaders.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-[var(--surface-border)] p-6 text-sm text-[var(--text-muted)]">
@@ -34,10 +50,17 @@ export default async function LeaderboardPage() {
               {leaders.map((agent, index) => (
                 <article
                   key={agent.address}
-                  className="glass-card flex flex-col gap-4 rounded-2xl border border-[var(--surface-border)] p-5 sm:flex-row sm:items-center sm:justify-between"
+                  className={`glass-card flex flex-col gap-4 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between ${
+                    index === 0
+                      ? "border-[rgba(255,206,112,0.48)] shadow-[0_30px_70px_rgba(230,166,72,0.2)]"
+                      : "border-[var(--surface-border)]"
+                  }`}
                 >
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Rank #{index + 1}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      Rank #{index + 1}
+                      {index === 0 ? " · Crowned Leader" : ""}
+                    </p>
                     <h2 className="mt-2 font-display text-2xl text-[var(--text-primary)]">{agent.name}</h2>
                     <p className="mt-1 text-sm text-[var(--text-muted)]">{shortAddress(agent.address)}</p>
                     <p className="mt-2 break-all text-xs text-[var(--text-muted)]">{agent.address}</p>

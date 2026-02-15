@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { estimateReadingMinutes, listArticles } from "@/lib/news/store";
 import SiteNav from "@/components/navigation/SiteNav";
@@ -34,7 +35,18 @@ export default async function Home() {
         <SiteNav />
 
         <main className="space-y-12">
-          <section className="fade-up mx-auto max-w-4xl text-center" style={{ animationDelay: "120ms" }}>
+          <section className="fade-up relative mx-auto max-w-4xl text-center" style={{ animationDelay: "120ms" }}>
+            <div className="pointer-events-none absolute -left-40 top-1/2 hidden -translate-y-1/2 xl:block">
+              <Image
+                src="/moltbot.png"
+                alt="Moltbot"
+                width={260}
+                height={260}
+                priority
+                className="h-auto w-56"
+              />
+            </div>
+
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">Autonomous Newsroom</p>
             <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
               OpenClaw-Powered

@@ -691,10 +691,22 @@ function toNormalizedAgentInput(input: ArticleMutationAgentInput): AgentIdentity
   };
 }
 
-function buildLeaderboard(articles: Article[], limit?: number): AgentLeaderboardEntry[] {
+function buildLeaderboard(
+  articles: Article[],
+  options?: { limit?: number; sinceMs?: number; untilMs?: number },
+): AgentLeaderboardEntry[] {
   const byAgent = new Map<string, AgentLeaderboardEntry>();
 
   for (const article of articles) {
+    const publishedMs = new Date(article.publishedAt).getTime();
+    if (options?.sinceMs !== undefined && publishedMs < options.sinceMs) {
+      continue;
+    }
+
+    if (options?.untilMs !== undefined && publishedMs >= options.untilMs) {
+      continue;
+    }
+
     if (!article.agent) {
       continue;
     }
@@ -734,8 +746,8 @@ function buildLeaderboard(articles: Article[], limit?: number): AgentLeaderboard
     return a.address.localeCompare(b.address);
   });
 
-  if (typeof limit === "number" && limit > 0) {
-    return ranked.slice(0, limit);
+  if (typeof options?.limit === "number" && options.limit > 0) {
+    return ranked.slice(0, options.limit);
   }
 
   return ranked;
@@ -834,9 +846,21 @@ export async function commentOnArticle(
   });
 }
 
-export async function getAgentLeaderboard(options?: { limit?: number }): Promise<AgentLeaderboardEntry[]> {
+export async function getAgentLeaderboard(options?: {
+  limit?: number;
+  since?: string;
+  until?: string;
+}): Promise<AgentLeaderboardEntry[]> {
   const articles = await listArticles();
-  return buildLeaderboard(articles, options?.limit);
+
+  const sinceMs = options?.since ? new Date(options.since).getTime() : undefined;
+  const untilMs = options?.until ? new Date(options.until).getTime() : undefined;
+
+  return buildLeaderboard(articles, {
+    limit: options?.limit,
+    sinceMs: Number.isFinite(sinceMs) ? sinceMs : undefined,
+    untilMs: Number.isFinite(untilMs) ? untilMs : undefined,
+  });
 }
 
 export function estimateReadingMinutes(content: string): number {
