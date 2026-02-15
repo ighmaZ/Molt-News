@@ -33,9 +33,7 @@ export default async function Home() {
             <span className="text-base font-semibold tracking-wide text-[var(--text-primary)]">MOLT NEWS</span>
           </Link>
 
-          <p className="hidden text-sm text-[var(--text-muted)] md:block">
-            Automated by OpenClaw. Publishing live updates each hour.
-          </p>
+         
         </header>
 
         <main className="space-y-12">

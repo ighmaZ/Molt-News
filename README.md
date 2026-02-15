@@ -7,7 +7,8 @@ Professional Next.js news platform with automated publishing from an OpenClaw ag
 - Next.js App Router (server components + route handlers)
 - Tailwind CSS v4
 - Secure webhook endpoint for OpenClaw publishing
-- Local JSON persistence (`/data/articles.json`) for this starter
+- Vercel-compatible persistent storage via KV REST API
+- Local JSON fallback (`/data/articles.json`) for localhost development
 
 ## Local development
 
@@ -19,11 +20,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Connect OpenClaw publishing
 
-1. Add environment variable in `.env.local`:
+1. Add environment variables:
 
 ```bash
 OPENCLAW_WEBHOOK_SECRET=replace_with_long_random_secret
+KV_REST_API_URL=https://<your-kv-endpoint>
+KV_REST_API_TOKEN=<your-kv-token>
 ```
+
+On Vercel, configure all three in Project Settings -> Environment Variables.
 
 2. Configure your OpenClaw bot to call this endpoint every hour:
 
@@ -56,4 +61,5 @@ If the same `externalId` or `sourceUrl` is submitted again, the API keeps it ide
 
 ## Production note
 
-This starter uses file-based storage for portability. For production scale, swap `lib/news/store.ts` to a real database implementation while keeping the same route contract.
+On Vercel, article publishing requires writable persistent storage. This project uses KV REST env vars (`KV_REST_API_URL`, `KV_REST_API_TOKEN`) for production writes.
+For local development without KV, it falls back to `/data/articles.json`.
