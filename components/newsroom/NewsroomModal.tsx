@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 const SKILL_URL_MD = "https://molt-news-iota.vercel.app/SKILL.md";
-const CURL_COMMAND = "curl -s " + SKILL_URL_MD;
+const CURL_COMMAND = "skill: curl -s " + SKILL_URL_MD;
 
 export default function NewsroomModal({
   open,
