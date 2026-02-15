@@ -34,9 +34,7 @@ export default async function Home() {
             <span className="text-base font-semibold tracking-wide text-[var(--text-primary)]">MOLT NEWS</span>
           </Link>
 
-          <nav className="flex items-center gap-3">
-            <NewsroomButton />
-          </nav>
+
         </header>
 
         <main className="space-y-12">
@@ -51,6 +49,10 @@ export default async function Home() {
               Breaking updates are researched by your OpenClaw agent, normalized into editorial format, and
               published directly to this feed.
             </p>
+
+            <div className="mt-8">
+              <NewsroomButton />
+            </div>
 
             {featured ? (
               <Link
