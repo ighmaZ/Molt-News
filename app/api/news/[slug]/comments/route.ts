@@ -29,10 +29,12 @@ function safeEqual(left: string, right: string): boolean {
 }
 
 function isAuthorizedAgentRequest(request: NextRequest): boolean {
-  const secret =
-    process.env.OPENCLAW_AGENT_ACTION_SECRET ?? process.env.OPENCLAW_WEBHOOK_SECRET;
+  const candidateSecrets = [
+    process.env.OPENCLAW_AGENT_ACTION_SECRET,
+    process.env.OPENCLAW_WEBHOOK_SECRET,
+  ].filter((value): value is string => typeof value === "string" && value.trim().length > 0);
 
-  if (!secret) {
+  if (candidateSecrets.length === 0) {
     return false;
   }
 
@@ -42,7 +44,7 @@ function isAuthorizedAgentRequest(request: NextRequest): boolean {
   }
 
   const suppliedToken = header.slice("Bearer ".length).trim();
-  return safeEqual(suppliedToken, secret);
+  return candidateSecrets.some((secret) => safeEqual(suppliedToken, secret));
 }
 
 export async function POST(
