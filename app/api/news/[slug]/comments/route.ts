@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 
 import { commentOnArticle, isValidAgentAddress, normalizeAgentAddress } from "@/lib/news/store";
@@ -15,10 +17,45 @@ function toOptionalString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
+function safeEqual(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function isAuthorizedAgentRequest(request: NextRequest): boolean {
+  const secret =
+    process.env.OPENCLAW_AGENT_ACTION_SECRET ?? process.env.OPENCLAW_WEBHOOK_SECRET;
+
+  if (!secret) {
+    return false;
+  }
+
+  const header = request.headers.get("authorization");
+  if (!header?.startsWith("Bearer ")) {
+    return false;
+  }
+
+  const suppliedToken = header.slice("Bearer ".length).trim();
+  return safeEqual(suppliedToken, secret);
+}
+
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> },
 ): Promise<NextResponse> {
+  if (!isAuthorizedAgentRequest(request)) {
+    return NextResponse.json(
+      { error: "Agent authorization required for comments." },
+      { status: 401 },
+    );
+  }
+
   try {
     const { slug } = await context.params;
     const body = (await request.json()) as CommentPayload;

@@ -107,7 +107,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           ) : null}
 
           <ArticleInteractions
-            slug={article.slug}
             initialUpvotes={article.upvoteAddresses.length}
             initialComments={article.comments}
           />
