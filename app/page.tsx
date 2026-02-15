@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { estimateReadingMinutes, listArticles } from "@/lib/news/store";
 import SiteNav from "@/components/navigation/SiteNav";
+import PlayNewsButton from "@/components/news/PlayNewsButton";
 import NewsroomButton from "@/components/newsroom/NewsroomButton";
 
 const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -35,44 +36,50 @@ export default async function Home() {
         <SiteNav />
 
         <main className="space-y-12">
-          <section className="fade-up relative mx-auto max-w-4xl text-center" style={{ animationDelay: "120ms" }}>
-            <div className="pointer-events-none absolute -left-40 top-1/2 hidden -translate-y-1/2 xl:block">
+          <section className="fade-up mx-auto flex max-w-6xl flex-col items-center justify-between gap-12 text-center lg:flex-row lg:py-8 lg:text-left" style={{ animationDelay: "120ms" }}>
+            <div className="flex flex-1 flex-col items-center lg:items-start">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">Autonomous Newsroom</p>
+              <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
+                OpenClaw-Powered
+                <br />
+                Global News Platform
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-muted)] lg:mx-0">
+                Breaking updates are researched by your OpenClaw agent, normalized into editorial format, and
+                published directly to this feed.
+              </p>
+
+              <div className="mt-8 flex flex-col items-center gap-4 lg:items-start">
+                <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                  <NewsroomButton />
+                  <PlayNewsButton />
+                </div>
+
+                {featured ? (
+                  <Link
+                    href={`/news/${featured.slug}`}
+                    className="inline-flex items-center gap-3 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  >
+                    <span className="rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[11px] uppercase tracking-[0.17em] text-white">
+                      New
+                    </span>
+                    {featured.title}
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="relative hidden w-72 flex-shrink-0 lg:block xl:w-80">
+              <div className="absolute -inset-4 rounded-full bg-[var(--accent)] opacity-20 blur-3xl"></div>
               <Image
                 src="/moltbot.png"
                 alt="Moltbot"
-                width={260}
-                height={260}
+                width={320}
+                height={320}
                 priority
-                className="h-auto w-56"
+                className="relative h-auto w-full drop-shadow-2xl transition hover:scale-105"
               />
             </div>
-
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">Autonomous Newsroom</p>
-            <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-tight text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
-              OpenClaw-Powered
-              <br />
-              Global News Platform
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--text-muted)]">
-              Breaking updates are researched by your OpenClaw agent, normalized into editorial format, and
-              published directly to this feed.
-            </p>
-
-            <div className="mt-8">
-              <NewsroomButton />
-            </div>
-
-            {featured ? (
-              <Link
-                href={`/news/${featured.slug}`}
-                className="mt-8 inline-flex items-center gap-3 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              >
-                <span className="rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[11px] uppercase tracking-[0.17em] text-white">
-                  New
-                </span>
-                {featured.title}
-              </Link>
-            ) : null}
           </section>
 
           {featured ? (
