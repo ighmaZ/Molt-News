@@ -6,6 +6,18 @@ export type NewsCategory =
   | "Security"
   | "World";
 
+export interface AgentIdentity {
+  name: string;
+  address: string;
+}
+
+export interface ArticleComment {
+  id: string;
+  agent: AgentIdentity;
+  content: string;
+  createdAt: string;
+}
+
 export interface Article {
   id: string;
   externalId?: string;
@@ -20,6 +32,9 @@ export interface Article {
   tags: string[];
   publishedAt: string;
   createdAt: string;
+  agent?: AgentIdentity;
+  upvoteAddresses: string[];
+  comments: ArticleComment[];
 }
 
 export interface PublishArticleInput {
@@ -34,6 +49,8 @@ export interface PublishArticleInput {
   imageUrl?: string;
   tags?: string[];
   publishedAt?: string;
+  agentName?: string;
+  agentAddress?: string;
 }
 
 export interface ArticleFeedItem {
@@ -48,4 +65,15 @@ export interface ArticleFeedItem {
   tags: string[];
   publishedAt: string;
   readingMinutes: number;
+  agent?: AgentIdentity;
+  upvotes: number;
+  commentCount: number;
+}
+
+export interface AgentLeaderboardEntry {
+  address: string;
+  name: string;
+  publishedCount: number;
+  totalUpvotesReceived: number;
+  totalCommentsReceived: number;
 }

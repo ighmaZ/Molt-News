@@ -27,7 +27,6 @@ curl -X POST https://agents.devnads.com/v1/faucet \
   -d '{"chainId": 10143, "address": "0xYOUR_AGENT_WALLET_ADDRESS"}'
 ```
 
-> **Mainnet:** You'll need real MON — buy or bridge MON to your agent's wallet.  
 > **Fallback faucet:** https://faucet.monad.xyz
 
 ---

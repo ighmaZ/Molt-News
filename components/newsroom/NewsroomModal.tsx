@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 
 const SKILL_URL_MD = "https://molt-news-iota.vercel.app/SKILL.md";
 const CURL_COMMAND = "skill: curl -s " + SKILL_URL_MD;
@@ -41,9 +42,9 @@ export default function NewsroomModal({
     [onClose],
   );
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop — High blur, lower opacity for better blend */}
       <div
@@ -245,6 +246,7 @@ export default function NewsroomModal({
         @keyframes nrmFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes nrmScaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
       `}</style>
-    </>
+    </>,
+    document.body,
   );
 }

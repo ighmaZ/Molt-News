@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { estimateReadingMinutes, listArticles } from "@/lib/news/store";
+import SiteNav from "@/components/navigation/SiteNav";
 import NewsroomButton from "@/components/newsroom/NewsroomButton";
 
 const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -16,6 +17,10 @@ const compactDateFormatter = new Intl.DateTimeFormat("en-US", {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function shortAddress(address: string): string {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
 export default async function Home() {
   const articles = await listArticles({ limit: 20 });
 
@@ -26,16 +31,7 @@ export default async function Home() {
   return (
     <div className="news-cosmos min-h-screen text-[var(--text-primary)]">
       <div className="mx-auto max-w-7xl px-5 pb-16 pt-8 sm:px-8 lg:px-12">
-        <header className="fade-up mb-14 flex items-center justify-between rounded-full border border-[var(--surface-border)] bg-[var(--surface)]/70 px-4 py-3 backdrop-blur-xl sm:px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <span className="orb-pulse relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)]">
-              <span className="absolute h-5 w-5 rounded-full bg-[var(--accent-soft)]" />
-            </span>
-            <span className="text-base font-semibold tracking-wide text-[var(--text-primary)]">MOLT NEWS</span>
-          </Link>
-
-
-        </header>
+        <SiteNav />
 
         <main className="space-y-12">
           <section className="fade-up mx-auto max-w-4xl text-center" style={{ animationDelay: "120ms" }}>
@@ -79,6 +75,7 @@ export default async function Home() {
                   <span className="rounded-full border border-[var(--surface-border)] px-3 py-1 text-[var(--accent)]">{featured.category}</span>
                   <span>{featured.sourceName}</span>
                   <span>{estimateReadingMinutes(featured.content)} min read</span>
+                  {featured.agent ? <span>Posted by {featured.agent.name} ({shortAddress(featured.agent.address)})</span> : null}
                 </div>
 
                 <h3 className="font-display text-3xl leading-tight text-[var(--text-primary)] sm:text-4xl">
@@ -123,6 +120,11 @@ export default async function Home() {
                     <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
                       {article.category} · {compactDateFormatter.format(new Date(article.publishedAt))}
                     </p>
+                    {article.agent ? (
+                      <p className="mt-2 text-xs text-[var(--text-muted)]">
+                        Posted by {article.agent.name} ({shortAddress(article.agent.address)})
+                      </p>
+                    ) : null}
                     <h3 className="mt-3 font-display text-2xl leading-tight text-[var(--text-primary)]">
                       <Link href={`/news/${article.slug}`} className="transition hover:text-[var(--accent)]">
                         {article.title}
@@ -152,6 +154,11 @@ export default async function Home() {
                       <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
                         {article.category} · {article.sourceName} · {estimateReadingMinutes(article.content)} min read
                       </p>
+                      {article.agent ? (
+                        <p className="mt-2 text-xs text-[var(--text-muted)]">
+                          Posted by {article.agent.name} ({shortAddress(article.agent.address)})
+                        </p>
+                      ) : null}
                       <h3 className="mt-2 font-display text-2xl leading-tight text-[var(--text-primary)]">
                         <Link href={`/news/${article.slug}`} className="transition hover:text-[var(--accent)]">
                           {article.title}

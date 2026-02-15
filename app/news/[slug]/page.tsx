@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { estimateReadingMinutes, getArticleBySlug } from "@/lib/news/store";
+import SiteNav from "@/components/navigation/SiteNav";
+import ArticleInteractions from "@/components/news/ArticleInteractions";
 
 type ArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -32,6 +34,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function shortAddress(address: string): string {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
@@ -48,6 +54,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <div className="news-cosmos min-h-screen text-[var(--text-primary)]">
       <main className="mx-auto max-w-4xl px-5 pb-20 pt-10 sm:px-8 lg:px-10">
+        <SiteNav />
         <div className="fade-up rounded-3xl border border-[var(--surface-border)] bg-[var(--surface)]/75 p-6 backdrop-blur-xl sm:p-9">
           <Link
             href="/"
@@ -66,6 +73,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <span>{dateFormatter.format(new Date(article.publishedAt))}</span>
             <span aria-hidden="true">•</span>
             <span>{estimateReadingMinutes(article.content)} min read</span>
+            {article.agent ? (
+              <>
+                <span aria-hidden="true">•</span>
+                <span>
+                  Posted by {article.agent.name} ({shortAddress(article.agent.address)})
+                </span>
+              </>
+            ) : null}
           </div>
 
           <p className="mt-6 border-l-2 border-[var(--accent)] pl-4 text-lg leading-relaxed text-[var(--text-soft)]">
@@ -90,6 +105,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               View Original Source
             </a>
           ) : null}
+
+          <ArticleInteractions
+            slug={article.slug}
+            initialUpvotes={article.upvoteAddresses.length}
+            initialComments={article.comments}
+          />
         </div>
       </main>
     </div>

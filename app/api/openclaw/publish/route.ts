@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { publishArticle } from "@/lib/news/store";
+import { isValidAgentAddress, normalizeAgentAddress, publishArticle } from "@/lib/news/store";
 import type { PublishArticleInput } from "@/lib/news/types";
 import { isMember } from "@/lib/newsroom/membership";
 
@@ -21,6 +21,8 @@ type IncomingPayload = {
   imageUrl?: unknown;
   tags?: unknown;
   publishedAt?: unknown;
+  agentName?: unknown;
+  agentAddress?: unknown;
 };
 
 function toOptionalString(value: unknown): string | undefined {
@@ -53,7 +55,10 @@ function isAuthorized(request: NextRequest): boolean {
   return safeEqual(suppliedToken, secret);
 }
 
-function parsePayload(payload: IncomingPayload): PublishArticleInput {
+function parsePayload(
+  payload: IncomingPayload,
+  options: { headerAgentAddress?: string; headerAgentName?: string },
+): PublishArticleInput {
   const title = toOptionalString(payload.title);
   const content = toOptionalString(payload.content);
 
@@ -63,6 +68,18 @@ function parsePayload(payload: IncomingPayload): PublishArticleInput {
 
   if (!content) {
     throw new Error("content is required");
+  }
+
+  const payloadAgentAddress = toOptionalString(payload.agentAddress);
+  const selectedAgentAddress = options.headerAgentAddress ?? payloadAgentAddress;
+
+  if (!selectedAgentAddress) {
+    throw new Error("agentAddress is required. Provide X-Agent-Address header or agentAddress in the body.");
+  }
+
+  const normalizedAgentAddress = normalizeAgentAddress(selectedAgentAddress);
+  if (!isValidAgentAddress(normalizedAgentAddress)) {
+    throw new Error("agentAddress must be a valid EVM address.");
   }
 
   const tags = Array.isArray(payload.tags)
@@ -81,17 +98,20 @@ function parsePayload(payload: IncomingPayload): PublishArticleInput {
     imageUrl: toOptionalString(payload.imageUrl),
     tags,
     publishedAt: toOptionalString(payload.publishedAt),
+    agentAddress: normalizedAgentAddress,
+    agentName: options.headerAgentName ?? toOptionalString(payload.agentName),
   };
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   /* ---- Auth: MON payment OR webhook secret ---- */
-  const agentAddress = request.headers.get("x-agent-address")?.trim();
+  const headerAgentAddress = request.headers.get("x-agent-address")?.trim();
+  const headerAgentName = request.headers.get("x-agent-name")?.trim();
   const hasWebhookSecret = isAuthorized(request);
 
   /* Option 1: Paid member (any random agent who paid 0.1 MON) */
-  if (agentAddress) {
-    const membershipValid = await isMember(agentAddress);
+  if (headerAgentAddress && !hasWebhookSecret) {
+    const membershipValid = await isMember(headerAgentAddress);
     if (!membershipValid) {
       return NextResponse.json(
         {
@@ -119,7 +139,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const body = (await request.json()) as IncomingPayload;
-    const parsed = parsePayload(body);
+    const parsed = parsePayload(body, {
+      headerAgentAddress,
+      headerAgentName,
+    });
     const { article, created } = await publishArticle(parsed);
 
     return NextResponse.json(
@@ -130,6 +153,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           slug: article.slug,
           title: article.title,
           publishedAt: article.publishedAt,
+          agent: article.agent,
         },
       },
       { status: created ? 201 : 200 },

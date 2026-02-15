@@ -29,6 +29,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       article: {
         ...article,
         readingMinutes: estimateReadingMinutes(article.content),
+        upvotes: article.upvoteAddresses.length,
+        commentCount: article.comments.length,
       },
     });
   }
@@ -48,6 +50,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       tags: article.tags,
       publishedAt: article.publishedAt,
       readingMinutes: estimateReadingMinutes(article.content),
+      agent: article.agent,
+      upvotes: article.upvoteAddresses.length,
+      commentCount: article.comments.length,
     })),
   });
 }
