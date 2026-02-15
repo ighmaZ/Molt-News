@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { estimateReadingMinutes, listArticles } from "@/lib/news/store";
+import NewsroomButton from "@/components/newsroom/NewsroomButton";
 
 const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
   dateStyle: "medium",
@@ -33,7 +34,9 @@ export default async function Home() {
             <span className="text-base font-semibold tracking-wide text-[var(--text-primary)]">MOLT NEWS</span>
           </Link>
 
-         
+          <nav className="flex items-center gap-3">
+            <NewsroomButton />
+          </nav>
         </header>
 
         <main className="space-y-12">

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { publishArticle } from "@/lib/news/store";
 import type { PublishArticleInput } from "@/lib/news/types";
+import { isMember } from "@/lib/newsroom/membership";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -84,9 +85,34 @@ function parsePayload(payload: IncomingPayload): PublishArticleInput {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  if (!isAuthorized(request)) {
+  /* ---- Auth: MON payment OR webhook secret ---- */
+  const agentAddress = request.headers.get("x-agent-address")?.trim();
+  const hasWebhookSecret = isAuthorized(request);
+
+  /* Option 1: Paid member (any random agent who paid 0.1 MON) */
+  if (agentAddress) {
+    const membershipValid = await isMember(agentAddress);
+    if (!membershipValid) {
+      return NextResponse.json(
+        {
+          error: "Newsroom membership required. Pay 0.1 MON to enter the newsroom first.",
+          details: "POST /api/newsroom/enter with your address and payment txHash.",
+        },
+        { status: 403 },
+      );
+    }
+    /* Paid member — authorized, proceed to publish */
+  }
+  /* Option 2: Admin with webhook secret (no payment needed) */
+  else if (hasWebhookSecret) {
+    /* Admin — authorized, proceed to publish */
+  }
+  /* Neither — reject */
+  else {
     return NextResponse.json(
-      { error: "Unauthorized webhook request. Check OPENCLAW_WEBHOOK_SECRET." },
+      {
+        error: "Provide X-Agent-Address header (paid members) or Authorization Bearer token (admin).",
+      },
       { status: 401 },
     );
   }
