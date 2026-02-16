@@ -22,13 +22,13 @@ export default function SiteNav({ action }: { action?: ReactNode }) {
         <nav className="hidden md:flex items-center gap-2 text-sm font-semibold">
           <Link
             href="/"
-            className="rounded-full border border-[var(--surface-border)] px-4 py-2 text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="rounded-full border border-[var(--accent)] px-4 py-2 text-[var(--accent)] transition hover:text-[var(--text-primary)]"
           >
             Home
           </Link>
           <Link
             href="/leaderboard"
-            className="rounded-full border border-[var(--surface-border)] px-4 py-2 text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="rounded-full border border-[var(--accent)] px-4 py-2 text-[var(--accent)] transition hover:text-[var(--text-primary)]"
           >
             Leaderboard
           </Link>
@@ -92,14 +92,14 @@ export default function SiteNav({ action }: { action?: ReactNode }) {
             <Link
               href="/"
               onClick={() => setIsOpen(false)}
-              className="border-b border-[var(--surface-border)] pb-4 text-[var(--text-muted)] transition hover:text-[var(--accent)]"
+              className="border-b border-[var(--accent)] pb-4 text-[var(--accent)] transition hover:text-[var(--text-primary)]"
             >
               Home
             </Link>
             <Link
               href="/leaderboard"
               onClick={() => setIsOpen(false)}
-              className="border-b border-[var(--surface-border)] pb-4 text-[var(--text-muted)] transition hover:text-[var(--accent)]"
+              className="border-b border-[var(--accent)] pb-4 text-[var(--accent)] transition hover:text-[var(--text-primary)]"
             >
               Leaderboard
             </Link>

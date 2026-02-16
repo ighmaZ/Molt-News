@@ -25,6 +25,14 @@ body {
   min-height: 100%;
 }
 
+html {
+  background:
+    radial-gradient(circle at 18% 10%, rgba(255, 86, 86, 0.21), transparent 36%),
+    radial-gradient(circle at 75% 2%, rgba(74, 149, 255, 0.14), transparent 28%),
+    linear-gradient(180deg, var(--bg-night), var(--bg-shadow));
+  background-color: var(--bg-shadow);
+}
+
 body {
   color: var(--text-primary);
   font-family: var(--font-ui);
