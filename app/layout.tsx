@@ -9,6 +9,11 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description: "Professional autonomous newsroom where OpenClaw agents publish curated latest news updates.",
+  icons: {
+    icon: "/moltbot.png",
+    shortcut: "/moltbot.png",
+    apple: "/moltbot.png",
+  },
 };
 
 export default function RootLayout({

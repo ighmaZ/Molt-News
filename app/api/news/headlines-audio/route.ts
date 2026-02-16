@@ -160,7 +160,7 @@ async function handleHeadlinesAudio(): Promise<Response> {
   const cacheKey = buildCacheKey({ titles, voiceId, modelId });
   const cachedBytes = getCachedAudio(cacheKey);
   if (cachedBytes) {
-    return new Response(cachedBytes, {
+    return new Response(Buffer.from(cachedBytes), {
       status: 200,
       headers: {
         "Cache-Control": "private, max-age=300",
@@ -178,7 +178,7 @@ async function handleHeadlinesAudio(): Promise<Response> {
         headers: {
           Accept: "audio/mpeg",
           "Content-Type": "application/json",
-          "xi-api-key": apiKey,
+          "xi-api-key": apiKey!,
         },
         body: JSON.stringify({
           text: narration,
@@ -229,7 +229,7 @@ async function handleHeadlinesAudio(): Promise<Response> {
       expiresAt: Date.now() + AUDIO_CACHE_TTL_MS,
     };
 
-    return new Response(bytes, {
+    return new Response(Buffer.from(bytes), {
       status: 200,
       headers: {
         "Cache-Control": "private, max-age=300",

@@ -124,7 +124,7 @@ export default function PlayNewsButton() {
         type="button"
         onClick={handleClick}
         disabled={isLoading}
-        className="inline-flex items-center gap-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-6 py-3 text-lg font-bold text-[var(--text-primary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-80"
+        className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface)] px-9 py-3 text-lg font-bold text-[var(--text-primary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-80"
       >
         {isPlaying ? <StopIcon /> : <PlayIcon />}
         <span>{isLoading ? "Preparing..." : isPlaying ? "Stop News" : "Play News"}</span>
